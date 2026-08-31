@@ -82,7 +82,7 @@ begin
    begin
       Check ("7.1 Function table length is 4", T_Two_To_One'Length(1) = 4);
       Check ("7.2 Is_One_To_One_Function returns False", not Is_One_To_One_Function (T_Two_To_One));
-      Check ("7.3 Non-bijective detected correctly", T_Two_To_One(1, 1 .. 2) = T_Two_To_One(3, 1 .. 2));
+      Check ("7.3 Non-bijective detected correctly", T_Two_To_One(0, 1) = T_Two_To_One(2, 1) and then T_Two_To_One(0, 2) = T_Two_To_One(2, 2));
    end;
 
    -- TEST 8 — Verify_Simon_Promise
@@ -124,7 +124,7 @@ begin
    -- TEST 11 — Solve_Simon_System
    Put_Line ("TEST 11 — Solve_Simon_System");
    declare
-      Eqs : Equation_Matrix (1 .. 1, 1 .. 3) := ((1, 0, 0),);
+      Eqs : Equation_Matrix (1 .. 1, 1 .. 3) := ((1, 0, 0));
       Sol : constant Bit_Vector := Solve_Simon_System (Eqs, 2);
    begin
       Check ("11.1 Solution length is 2", Sol'Length = 2);
