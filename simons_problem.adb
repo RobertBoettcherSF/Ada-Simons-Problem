@@ -260,7 +260,16 @@ package body Simons_Problem is
          end loop;
 
          if Eq_Count > 0 then
-            return Solve_Simon_System (Eq_Mat(1 .. Eq_Count, 1 .. N + 1), N);
+            declare
+               Sub_Mat : Equation_Matrix (1 .. Eq_Count, 1 .. N + 1);
+            begin
+               for R in 1 .. Eq_Count loop
+                  for C in 1 .. N + 1 loop
+                     Sub_Mat (R, C) := Eq_Mat (R, C);
+                  end loop;
+               end loop;
+               return Solve_Simon_System (Sub_Mat, N);
+            end;
          else
             return S_Actual;
          end if;
