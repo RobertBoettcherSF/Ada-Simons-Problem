@@ -5,8 +5,15 @@
 package body Simons_Problem is
 
    function Is_Power_Of_Two (N : Natural) return Boolean is
+      Val : Natural := N;
    begin
-      return N > 0 and then (N and (N - 1)) = 0;
+      if N = 0 then
+         return False;
+      end if;
+      while Val mod 2 = 0 loop
+         Val := Val / 2;
+      end loop;
+      return Val = 1;
    end Is_Power_Of_Two;
 
    function Log2 (N : Natural) return Positive is
