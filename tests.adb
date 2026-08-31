@@ -48,7 +48,7 @@ begin
    begin
       Check ("4.1 Dot product (1,0,1).(1,1,1) = 0", Dot_Product (V1, V2) = 0);
       Check ("4.2 Dot product self (1,0,1).(1,0,1) = 0", Dot_Product (V1, V1) = 0);
-      Check ("4.3 Dot product orthogonal check", Dot_Product ([1, 0], [0, 1]) = 0);
+      Check ("4.3 Dot product orthogonal check", Dot_Product (Bit_Vector'([1, 0]), Bit_Vector'([0, 1])) = 0);
    end;
 
    -- TEST 5 — Vector / Natural Conversions
@@ -92,7 +92,7 @@ begin
       S_Zero_Vec   : constant Bit_Vector := [0, 0];
    begin
       Check ("8.1 Verify promise with secret (1,0)", Verify_Simon_Promise (T_Two_To_One, S_Secret));
-      Check ("8.2 Verify promise with incorrect secret (0,1)", not Verify_Simon_Promise (T_Two_To_One, [0, 1]));
+      Check ("8.2 Verify promise with incorrect secret (0,1)", not Verify_Simon_Promise (T_Two_To_One, Bit_Vector'([0, 1])));
       Check ("8.3 Verify bijective with zero secret", Verify_Simon_Promise (T_Bijective, S_Zero_Vec));
    end;
 
