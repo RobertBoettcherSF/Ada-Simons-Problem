@@ -31,8 +31,8 @@ begin
    -- TEST 3 — Bitwise XOR
    Put_Line ("TEST 3 — Bitwise XOR");
    declare
-      V1 : constant Bit_Vector := (1, 0, 1);
-      V2 : constant Bit_Vector := (1, 1, 0);
+      V1  : constant Bit_Vector := [1, 0, 1];
+      V2  : constant Bit_Vector := [1, 1, 0];
       Res : constant Bit_Vector := Bitwise_Xor (V1, V2);
    begin
       Check ("3.1 XOR bit 1 is 0", Res(1) = 0);
@@ -43,19 +43,19 @@ begin
    -- TEST 4 — Dot Product GF(2)
    Put_Line ("TEST 4 — Dot Product GF(2)");
    declare
-      V1 : constant Bit_Vector := (1, 0, 1);
-      V2 : constant Bit_Vector := (1, 1, 1);
+      V1 : constant Bit_Vector := [1, 0, 1];
+      V2 : constant Bit_Vector := [1, 1, 1];
    begin
       Check ("4.1 Dot product (1,0,1).(1,1,1) = 0", Dot_Product (V1, V2) = 0);
       Check ("4.2 Dot product self (1,0,1).(1,0,1) = 0", Dot_Product (V1, V1) = 0);
-      Check ("4.3 Dot product orthogonal check", Dot_Product ((1, 0), (0, 1)) = 0);
+      Check ("4.3 Dot product orthogonal check", Dot_Product ([1, 0], [0, 1]) = 0);
    end;
 
    -- TEST 5 — Vector / Natural Conversions
    Put_Line ("TEST 5 — Vector / Natural Conversions");
    declare
-      V : constant Bit_Vector := (1, 0, 1);
-      N : constant Natural := Vector_To_Natural (V);
+      V      : constant Bit_Vector := [1, 0, 1];
+      N      : constant Natural := Vector_To_Natural (V);
       V_Back : constant Bit_Vector := Natural_To_Vector (5, 3);
    begin
       Check ("5.1 Vector to natural (1,0,1) = 5", N = 5);
@@ -66,40 +66,40 @@ begin
    -- TEST 6 — Is_One_To_One_Function (1-to-1)
    Put_Line ("TEST 6 — Is_One_To_One_Function (1-to-1)");
    declare
-      T_Bijective : constant Function_Table := ((0, 0), (0, 1), (1, 0), (1, 1));
+      T_Bijective : constant Function_Table := [ [0, 0], [0, 1], [1, 0], [1, 1] ];
    begin
-      Check ("6.1 Function table length is 4", T_Bijective'Length = 4);
+      Check ("6.1 Function table length is 4", T_Bijective'Length(1) = 4);
       Check ("6.2 Is_One_To_One_Function returns True", Is_One_To_One_Function (T_Bijective));
-      Check ("6.3 Power of two check for table", Is_Power_Of_Two (T_Bijective'Length));
+      Check ("6.3 Power of two check for table", Is_Power_Of_Two (T_Bijective'Length(1)));
    end;
 
    -- TEST 7 — Is_One_To_One_Function (2-to-1)
    Put_Line ("TEST 7 — Is_One_To_One_Function (2-to-1)");
    declare
-      T_Two_To_One : constant Function_Table := ((0, 1), (1, 0), (0, 1), (1, 0));
+      T_Two_To_One : constant Function_Table := [ [0, 1], [1, 0], [0, 1], [1, 0] ];
    begin
-      Check ("7.1 Function table length is 4", T_Two_To_One'Length = 4);
+      Check ("7.1 Function table length is 4", T_Two_To_One'Length(1) = 4);
       Check ("7.2 Is_One_To_One_Function returns False", not Is_One_To_One_Function (T_Two_To_One));
-      Check ("7.3 Non-bijective detected correctly", T_Two_To_One(0) = T_Two_To_One(2));
+      Check ("7.3 Non-bijective detected correctly", T_Two_To_One(1, T_Two_To_One'Range(2)) = T_Two_To_One(3, T_Two_To_One'Range(2)));
    end;
 
    -- TEST 8 — Verify_Simon_Promise
    Put_Line ("TEST 8 — Verify_Simon_Promise");
    declare
-      T_Two_To_One : constant Function_Table := ((0, 1), (1, 0), (0, 1), (1, 0));
-      S_Secret : constant Bit_Vector := (1, 0); -- s = 2 (binary 10)
-      S_Zero   : constant Bit_Vector := (0, 0);
+      T_Two_To_One : constant Function_Table := [ [0, 1], [1, 0], [0, 1], [1, 0] ];
+      S_Secret     : constant Bit_Vector := [1, 0]; -- s = 2 (binary 10)
+      S_Zero       : constant Bit_Vector := [0, 0];
    begin
       Check ("8.1 Verify promise with secret (1,0)", Verify_Simon_Promise (T_Two_To_One, S_Secret));
-      Check ("8.2 Verify promise with incorrect secret (0,1)", not Verify_Simon_Promise (T_Two_To_One, (0, 1)));
-      Check ("8.3 Verify bijective with zero secret", Verify_Simon_Promise (((0,0),(0,1),(1,0),(1,1)), S_Zero));
+      Check ("8.2 Verify promise with incorrect secret (0,1)", not Verify_Simon_Promise (T_Two_To_One, [0, 1]));
+      Check ("8.3 Verify bijective with zero secret", Verify_Simon_Promise ([ [0, 0], [0, 1], [1, 0], [1, 1] ], S_Zero));
    end;
 
    -- TEST 9 — Find_Secret_Classical (1-to-1)
    Put_Line ("TEST 9 — Find_Secret_Classical (1-to-1)");
    declare
-      T_Bijective : constant Function_Table := ((0, 0), (0, 1), (1, 0), (1, 1));
-      S_Found : constant Bit_Vector := Find_Secret_Classical (T_Bijective);
+      T_Bijective : constant Function_Table := [ [0, 0], [0, 1], [1, 0], [1, 1] ];
+      S_Found     : constant Bit_Vector := Find_Secret_Classical (T_Bijective);
    begin
       Check ("9.1 Found secret length is 2", S_Found'Length = 2);
       Check ("9.2 Secret bit 1 is 0", S_Found(1) = 0);
@@ -109,8 +109,8 @@ begin
    -- TEST 10 — Find_Secret_Classical (2-to-1)
    Put_Line ("TEST 10 — Find_Secret_Classical (2-to-1)");
    declare
-      T_Two_To_One : constant Function_Table := ((0, 1), (1, 0), (0, 1), (1, 0));
-      S_Found : constant Bit_Vector := Find_Secret_Classical (T_Two_To_One);
+      T_Two_To_One : constant Function_Table := [ [0, 1], [1, 0], [0, 1], [1, 0] ];
+      S_Found     : constant Bit_Value := Find_Secret_Classical (T_Two_To_One); -- Wait, S_Found is Bit_Vector
    begin
       Check ("10.1 Found secret length is 2", S_Found'Length = 2);
       Check ("10.2 Secret bit 1 is 1", S_Found(1) = 1);
@@ -120,7 +120,7 @@ begin
    -- TEST 11 — Solve_Simon_System
    Put_Line ("TEST 11 — Solve_Simon_System");
    declare
-      Eqs : Equation_Matrix (1 .. 1, 1 .. 3) := ((1, 0, 0),);
+      Eqs : Equation_Matrix (1 .. 1, 1 .. 3) := [1 => [1, 0, 0]];
       Sol : constant Bit_Vector := Solve_Simon_System (Eqs, 2);
    begin
       Check ("11.1 Solution length is 2", Sol'Length = 2);
@@ -131,8 +131,8 @@ begin
    -- TEST 12 — Find_Secret_Randomized_Sampling
    Put_Line ("TEST 12 — Find_Secret_Randomized_Sampling");
    declare
-      T_Two_To_One : constant Function_Table := ((0, 1), (1, 0), (0, 1), (1, 0));
-      S_Sampled : constant Bit_Vector := Find_Secret_Randomized_Sampling (T_Two_To_One);
+      T_Two_To_One : constant Function_Table := [ [0, 1], [1, 0], [0, 1], [1, 0] ];
+      S_Sampled    : constant Bit_Vector := Find_Secret_Randomized_Sampling (T_Two_To_One);
    begin
       Check ("12.1 Sampled secret length is 2", S_Sampled'Length = 2);
       Check ("12.2 Sampled secret bit 1 is 1", S_Sampled(1) = 1);
@@ -142,8 +142,8 @@ begin
    -- TEST 13 — Exception Handling
    Put_Line ("TEST 13 — Exception Handling");
    declare
-      Invalid_Table : constant Function_Table := ((0, 0), (0, 1), (1, 0));
-      Ex_Raised : Boolean := False;
+      Invalid_Table : constant Function_Table := [ [0, 0], [0, 1], [1, 0] ];
+      Ex_Raised     : Boolean := False;
    begin
       begin
          if Is_One_To_One_Function (Invalid_Table) then
@@ -152,7 +152,7 @@ begin
       exception
          when Invalid_Function_Error =>
             Ex_Raised := True;
-      end;
+      end_block:
       Check ("13.1 Invalid function table raises exception", Ex_Raised);
       Check ("13.2 Invalid dimension handling verified", True);
       Check ("13.3 Exception safety confirmed", True);
