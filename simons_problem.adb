@@ -16,7 +16,7 @@ package body Simons_Problem is
       return Val = 1;
    end Is_Power_Of_Two;
 
-   function Log2 (N : Natural) return Positive is
+   function Log2 (N : Natural) return Natural is
       Val : Natural := N;
       Res : Natural := 0;
    begin
@@ -27,7 +27,7 @@ package body Simons_Problem is
          Val := Val / 2;
          Res := Res + 1;
       end loop;
-      return Positive(Res);
+      return Res;
    end Log2;
 
    function Bitwise_Xor (A, B : Bit_Vector) return Bit_Vector is
@@ -179,10 +179,10 @@ package body Simons_Problem is
    end Find_Secret_Classical;
 
    function Solve_Simon_System (Equations : Equation_Matrix; Dimension : Positive) return Bit_Vector is
-      Mat       : Equation_Matrix := Equations;
+      Mat       : constant Equation_Matrix := Equations;
       Row_Count : constant Natural := Equations'Length(1);
       Col_Count : constant Natural := Equations'Length(2);
-      Result_S  : Bit_Vector (1 .. Dimension) := [others => 0];
+      Result_S  : constant Bit_Vector (1 .. Dimension) := [others => 0];
    begin
       if Col_Count /= Dimension + 1 then
          raise Invalid_Dimension_Error;
