@@ -80,7 +80,7 @@ begin
    begin
       Check ("7.1 Function table length is 4", T_Two_To_One'Length(1) = 4);
       Check ("7.2 Is_One_To_One_Function returns False", not Is_One_To_One_Function (T_Two_To_One));
-      Check ("7.3 Non-bijective detected correctly", T_Two_To_One(1, T_Two_To_One'Range(2)) = T_Two_To_One(3, T_Two_To_One'Range(2)));
+      Check ("7.3 Non-bijective detected correctly", T_Two_To_One(1, 1 .. 2) = T_Two_To_One(3, 1 .. 2));
    end;
 
    -- TEST 8 — Verify_Simon_Promise
@@ -88,11 +88,11 @@ begin
    declare
       T_Two_To_One : constant Function_Table := [ [0, 1], [1, 0], [0, 1], [1, 0] ];
       S_Secret     : constant Bit_Vector := [1, 0]; -- s = 2 (binary 10)
-      S_Zero       : constant Bit_Vector := [0, 0];
+      S_Zero_Vec   : constant Bit_Vector := [0, 0];
    begin
       Check ("8.1 Verify promise with secret (1,0)", Verify_Simon_Promise (T_Two_To_One, S_Secret));
       Check ("8.2 Verify promise with incorrect secret (0,1)", not Verify_Simon_Promise (T_Two_To_One, [0, 1]));
-      Check ("8.3 Verify bijective with zero secret", Verify_Simon_Promise ([ [0, 0], [0, 1], [1, 0], [1, 1] ], S_Zero));
+      Check ("8.3 Verify bijective with zero secret", Verify_Simon_Promise ([ [0, 0], [0, 1], [1, 0], [1, 1] ], S_Zero_Vec));
    end;
 
    -- TEST 9 — Find_Secret_Classical (1-to-1)
@@ -110,7 +110,7 @@ begin
    Put_Line ("TEST 10 — Find_Secret_Classical (2-to-1)");
    declare
       T_Two_To_One : constant Function_Table := [ [0, 1], [1, 0], [0, 1], [1, 0] ];
-      S_Found     : constant Bit_Value := Find_Secret_Classical (T_Two_To_One); -- Wait, S_Found is Bit_Vector
+      S_Found      : constant Bit_Vector := Find_Secret_Classical (T_Two_To_One);
    begin
       Check ("10.1 Found secret length is 2", S_Found'Length = 2);
       Check ("10.2 Secret bit 1 is 1", S_Found(1) = 1);
@@ -152,7 +152,7 @@ begin
       exception
          when Invalid_Function_Error =>
             Ex_Raised := True;
-      end_block:
+      end;
       Check ("13.1 Invalid function table raises exception", Ex_Raised);
       Check ("13.2 Invalid dimension handling verified", True);
       Check ("13.3 Exception safety confirmed", True);
