@@ -49,7 +49,7 @@ package Simons_Problem is
    -- Helper Functions
    function Is_Power_Of_Two (N : Natural) return Boolean;
    
-   function Log2 (N : Natural) return Positive
+   function Log2 (N : Natural) return Natural
      with Pre => N > 0 and then Is_Power_Of_Two (N);
 
    function Bitwise_Xor (A, B : Bit_Vector) return Bit_Vector
