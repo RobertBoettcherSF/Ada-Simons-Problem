@@ -43,12 +43,14 @@ begin
    -- TEST 4 — Dot Product GF(2)
    Put_Line ("TEST 4 — Dot Product GF(2)");
    declare
-      V1 : constant Bit_Vector := [1, 0, 1];
-      V2 : constant Bit_Vector := [1, 1, 1];
+      V1    : constant Bit_Vector := [1, 0, 1];
+      V2    : constant Bit_Vector := [1, 1, 1];
+      Orth1 : constant Bit_Vector := [1, 0];
+      Orth2 : constant Bit_Vector := [0, 1];
    begin
       Check ("4.1 Dot product (1,0,1).(1,1,1) = 0", Dot_Product (V1, V2) = 0);
       Check ("4.2 Dot product self (1,0,1).(1,0,1) = 0", Dot_Product (V1, V1) = 0);
-      Check ("4.3 Dot product orthogonal check", Dot_Product ([1, 0], [0, 1]) = 0);
+      Check ("4.3 Dot product orthogonal check", Dot_Product (Orth1, Orth2) = 0);
    end;
 
    -- TEST 5 — Vector / Natural Conversions
@@ -90,9 +92,10 @@ begin
       T_Bijective  : constant Function_Table := [ [0, 0], [0, 1], [1, 0], [1, 1] ];
       S_Secret     : constant Bit_Vector := [1, 0]; -- s = 2 (binary 10)
       S_Zero_Vec   : constant Bit_Vector := [0, 0];
+      S_Incorrect  : constant Bit_Vector := [0, 1];
    begin
       Check ("8.1 Verify promise with secret (1,0)", Verify_Simon_Promise (T_Two_To_One, S_Secret));
-      Check ("8.2 Verify promise with incorrect secret (0,1)", not Verify_Simon_Promise (T_Two_To_One, [0, 1]));
+      Check ("8.2 Verify promise with incorrect secret (0,1)", not Verify_Simon_Promise (T_Two_To_One, S_Incorrect));
       Check ("8.3 Verify bijective with zero secret", Verify_Simon_Promise (T_Bijective, S_Zero_Vec));
    end;
 
@@ -121,8 +124,9 @@ begin
    -- TEST 11 — Solve_Simon_System
    Put_Line ("TEST 11 — Solve_Simon_System");
    declare
-      Eqs : Equation_Matrix (1 .. 1, 1 .. 3) := [1 => [1, 0, 0]];
-      Sol : constant Bit_Vector := Solve_Simon_System (Eqs, 2);
+      Row1 : constant Bit_Vector := [1, 0, 0];
+      Eqs  : Equation_Matrix (1 .. 1, 1 .. 3) := [1 => Row1];
+      Sol  : constant Bit_Vector := Solve_Simon_System (Eqs, 2);
    begin
       Check ("11.1 Solution length is 2", Sol'Length = 2);
       Check ("11.2 Solution is valid bit vector", Sol(1) = 0 or Sol(1) = 1);
