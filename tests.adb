@@ -92,7 +92,7 @@ begin
    begin
       Check ("8.1 Verify promise with secret (1,0)", Verify_Simon_Promise (T_Two_To_One, S_Secret));
       Check ("8.2 Verify promise with incorrect secret (0,1)", not Verify_Simon_Promise (T_Two_To_One, [0, 1]));
-      Check ("8.3 Verify bijective with zero secret", Verify_Simon_Promise ([ [0, 0], [0, 1], [1, 0], [1, 1] ], S_Zero_Vec));
+      Check ("8.3 Verify bijective with zero secret", Verify_Simon_Promise (Function_Table'([ [0, 0], [0, 1], [1, 0], [1, 1] ]), S_Zero_Vec));
    end;
 
    -- TEST 9 — Find_Secret_Classical (1-to-1)
