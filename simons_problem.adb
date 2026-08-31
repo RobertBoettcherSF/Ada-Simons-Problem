@@ -80,22 +80,34 @@ package body Simons_Problem is
    end Natural_To_Vector;
 
    function Is_One_To_One_Function (Table : Function_Table) return Boolean is
+      Cols : constant Positive := Table'Length(2);
    begin
       if not Is_Power_Of_Two (Table'Length(1)) then
          raise Invalid_Function_Error;
       end if;
       for I in Table'Range(1) loop
          for J in I + 1 .. Table'Last(1) loop
-            if Table(I, Table'Range(2)) = Table(J, Table'Range(2)) then
-               return False;
-            end if;
+            declare
+               Match : Boolean := True;
+            begin
+               for C in 1 .. Cols loop
+                  if Table(I, C) /= Table(J, C) then
+                     Match := False;
+                     exit;
+                  end if;
+               end loop;
+               if Match then
+                  return False;
+               end if;
+            end;
          end loop;
       end loop;
       return True;
    end Is_One_To_One_Function;
 
    function Verify_Simon_Promise (Table : Function_Table; S : Bit_Vector) return Boolean is
-      N : constant Positive := Log2 (Table'Length(1));
+      N    : constant Positive := Log2 (Table'Length(1));
+      Cols : constant Positive := Table'Length(2);
    begin
       if S'Length /= N then
          raise Invalid_Dimension_Error;
@@ -109,30 +121,51 @@ package body Simons_Problem is
             if Target_Index > Table'Last(1) then
                return False;
             end if;
-            if Table(I, Table'Range(2)) /= Table(Target_Index, Table'Range(2)) then
-               return False;
-            end if;
+            declare
+               Match : Boolean := True;
+            begin
+               for C in 1 .. Cols loop
+                  if Table(I, C) /= Table(Target_Index, C) then
+                     Match := False;
+                     exit;
+                  end if;
+               end loop;
+               if not Match then
+                  return False;
+               end if;
+            end;
          end;
       end loop;
       return True;
    end Verify_Simon_Promise;
 
    function Find_Secret_Classical (Table : Function_Table) return Bit_Vector is
-      N : constant Positive := Log2 (Table'Length(1));
+      N    : constant Positive := Log2 (Table'Length(1));
+      Cols : constant Positive := Table'Length(2);
    begin
       if not Is_Power_Of_Two (Table'Length(1)) then
          raise Invalid_Function_Error;
       end if;
       for I in Table'Range(1) loop
          for J in I + 1 .. Table'Last(1) loop
-            if Table(I, Table'Range(2)) = Table(J, Table'Range(2)) then
-               declare
-                  X_Vec : constant Bit_Vector := Natural_To_Vector (I - Table'First(1), N);
-                  Y_Vec : constant Bit_Vector := Natural_To_Vector (J - Table'First(1), N);
-               begin
-                  return Bitwise_Xor (X_Vec, Y_Vec);
-               end;
-            end if;
+            declare
+               Match : Boolean := True;
+            begin
+               for C in 1 .. Cols loop
+                  if Table(I, C) /= Table(J, C) then
+                     Match := False;
+                     exit;
+                  end if;
+               end loop;
+               if Match then
+                  declare
+                     X_Vec : constant Bit_Vector := Natural_To_Vector (I - Table'First(1), N);
+                     Y_Vec : constant Bit_Vector := Natural_To_Vector (J - Table'First(1), N);
+                  begin
+                     return Bitwise_Xor (X_Vec, Y_Vec);
+                  end;
+               end if;
+            end;
          end loop;
       end loop;
       return [1 .. N => 0];
@@ -159,7 +192,7 @@ package body Simons_Problem is
                   Row_Y : Bit_Vector (1 .. Dimension);
                begin
                   for C in 1 .. Dimension loop
-                     Row_Y(C) := Mat(Equations'First + R - 1, Equations'Second + C - 1);
+                     Row_Y(C) := Mat(Equations'First(1) + R - 1, Equations'First(2) + C - 1);
                   end loop;
                   if Dot_Product (Row_Y, Cand) /= 0 then
                      Valid := False;
