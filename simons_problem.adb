@@ -81,12 +81,12 @@ package body Simons_Problem is
 
    function Is_One_To_One_Function (Table : Function_Table) return Boolean is
    begin
-      if not Is_Power_Of_Two (Table'Length) then
+      if not Is_Power_Of_Two (Table'Length(1)) then
          raise Invalid_Function_Error;
       end if;
-      for I in Table'Range loop
-         for J in I + 1 .. Table'Last loop
-            if Table(I) = Table(J) then
+      for I in Table'Range(1) loop
+         for J in I + 1 .. Table'Last(1) loop
+            if Table(I, Table'Range(2)) = Table(J, Table'Range(2)) then
                return False;
             end if;
          end loop;
@@ -95,21 +95,21 @@ package body Simons_Problem is
    end Is_One_To_One_Function;
 
    function Verify_Simon_Promise (Table : Function_Table; S : Bit_Vector) return Boolean is
-      N : constant Positive := Log2 (Table'Length);
+      N : constant Positive := Log2 (Table'Length(1));
    begin
       if S'Length /= N then
          raise Invalid_Dimension_Error;
       end if;
-      for I in Table'Range loop
+      for I in Table'Range(1) loop
          declare
-            X_Vec        : constant Bit_Vector := Natural_To_Vector (I - Table'First, N);
+            X_Vec        : constant Bit_Vector := Natural_To_Vector (I - Table'First(1), N);
             X_Xor_S      : constant Bit_Vector := Bitwise_Xor (X_Vec, S);
-            Target_Index : constant Natural := Table'First + Vector_To_Natural (X_Xor_S);
+            Target_Index : constant Natural := Table'First(1) + Vector_To_Natural (X_Xor_S);
          begin
-            if Target_Index > Table'Last then
+            if Target_Index > Table'Last(1) then
                return False;
             end if;
-            if Table(I) /= Table(Target_Index) then
+            if Table(I, Table'Range(2)) /= Table(Target_Index, Table'Range(2)) then
                return False;
             end if;
          end;
@@ -118,31 +118,31 @@ package body Simons_Problem is
    end Verify_Simon_Promise;
 
    function Find_Secret_Classical (Table : Function_Table) return Bit_Vector is
-      N : constant Positive := Log2 (Table'Length);
+      N : constant Positive := Log2 (Table'Length(1));
    begin
-      if not Is_Power_Of_Two (Table'Length) then
+      if not Is_Power_Of_Two (Table'Length(1)) then
          raise Invalid_Function_Error;
       end if;
-      for I in Table'Range loop
-         for J in I + 1 .. Table'Last loop
-            if Table(I) = Table(J) then
+      for I in Table'Range(1) loop
+         for J in I + 1 .. Table'Last(1) loop
+            if Table(I, Table'Range(2)) = Table(J, Table'Range(2)) then
                declare
-                  X_Vec : constant Bit_Vector := Natural_To_Vector (I - Table'First, N);
-                  Y_Vec : constant Bit_Vector := Natural_To_Vector (J - Table'First, N);
+                  X_Vec : constant Bit_Vector := Natural_To_Vector (I - Table'First(1), N);
+                  Y_Vec : constant Bit_Vector := Natural_To_Vector (J - Table'First(1), N);
                begin
                   return Bitwise_Xor (X_Vec, Y_Vec);
                end;
             end if;
          end loop;
       end loop;
-      return (1 .. N => 0);
+      return [1 .. N => 0];
    end Find_Secret_Classical;
 
    function Solve_Simon_System (Equations : Equation_Matrix; Dimension : Positive) return Bit_Vector is
       Mat       : Equation_Matrix := Equations;
       Row_Count : constant Natural := Equations'Length(1);
       Col_Count : constant Natural := Equations'Length(2);
-      Result_S  : Bit_Vector (1 .. Dimension) := (others => 0);
+      Result_S  : Bit_Vector (1 .. Dimension) := [others => 0];
    begin
       if Col_Count /= Dimension + 1 then
          raise Invalid_Dimension_Error;
@@ -177,7 +177,7 @@ package body Simons_Problem is
    end Solve_Simon_System;
 
    function Find_Secret_Randomized_Sampling (Table : Function_Table) return Bit_Vector is
-      N         : constant Positive := Log2 (Table'Length);
+      N         : constant Positive := Log2 (Table'Length(1));
       S_Actual  : constant Bit_Vector := Find_Secret_Classical (Table);
       All_Zero  : Boolean := True;
    begin
@@ -194,7 +194,7 @@ package body Simons_Problem is
 
       declare
          Max_Eqs  : constant Positive := N + 2;
-         Eq_Mat   : Equation_Matrix (1 .. Max_Eqs, 1 .. N + 1) := (others => (others => 0));
+         Eq_Mat   : Equation_Matrix (1 .. Max_Eqs, 1 .. N + 1) := [others => [others => 0]];
          Eq_Count : Natural := 0;
       begin
          for Counter in 1 .. 100 loop
