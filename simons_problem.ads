@@ -12,7 +12,7 @@ package Simons_Problem is
 
    type Bit_Vector is array (Positive range <>) of Bit;
 
-   type Function_Table is array (Natural range <>) of Bit_Vector;
+   type Function_Table is array (Natural range <>, Positive range <>) of Bit;
 
    type Equation_Matrix is array (Positive range <>, Positive range <>) of Bit;
 
@@ -23,11 +23,13 @@ package Simons_Problem is
 
    -- Variant 1: Decision version — determines if f is one-to-one (s = 0) or two-to-one
    function Is_One_To_One_Function (Table : Function_Table) return Boolean
-     with Pre => Table'Length > 0 and then Is_Power_Of_Two (Table'Length);
+     with Pre => Table'Length(1) > 0 and then Is_Power_Of_Two (Table'Length(1))
+                 and then Table'Length(2) = Log2 (Table'Length(1));
 
    -- Variant 2: Secret String Reconstruction (Deterministic Classical Collision Search)
    function Find_Secret_Classical (Table : Function_Table) return Bit_Vector
-     with Pre => Table'Length > 0 and then Is_Power_Of_Two (Table'Length);
+     with Pre => Table'Length(1) > 0 and then Is_Power_Of_Two (Table'Length(1))
+                 and then Table'Length(2) = Log2 (Table'Length(1));
 
    -- Variant 3: Algebraic System Solver over GF(2) (Simulating Simon's linear step)
    function Solve_Simon_System (Equations : Equation_Matrix; Dimension : Positive) return Bit_Vector
@@ -35,12 +37,14 @@ package Simons_Problem is
 
    -- Variant 4: Randomized Sampling Simulation (Quantum-inspired query and solve)
    function Find_Secret_Randomized_Sampling (Table : Function_Table) return Bit_Vector
-     with Pre => Table'Length > 0 and then Is_Power_Of_Two (Table'Length);
+     with Pre => Table'Length(1) > 0 and then Is_Power_Of_Two (Table'Length(1))
+                 and then Table'Length(2) = Log2 (Table'Length(1));
 
    -- Variant 5: Promise Verification (Validates if f satisfies Simon's promise for secret s)
    function Verify_Simon_Promise (Table : Function_Table; S : Bit_Vector) return Boolean
-     with Pre => Table'Length > 0 and then Is_Power_Of_Two (Table'Length)
-                 and then S'Length = Log2 (Table'Length);
+     with Pre => Table'Length(1) > 0 and then Is_Power_Of_Two (Table'Length(1))
+                 and then Table'Length(2) = Log2 (Table'Length(1))
+                 and then S'Length = Table'Length(2);
 
    -- Helper Functions
    function Is_Power_Of_Two (N : Natural) return Boolean;
