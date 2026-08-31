@@ -124,7 +124,7 @@ begin
    -- TEST 11 — Solve_Simon_System
    Put_Line ("TEST 11 — Solve_Simon_System");
    declare
-      Eqs : Equation_Matrix (1 .. 1, 1 .. 3) := [ [1, 0, 0] ];
+      Eqs : constant Equation_Matrix (1 .. 1, 1 .. 3) := [ [1, 0, 0] ];
       Sol : constant Bit_Vector := Solve_Simon_System (Eqs, 2);
    begin
       Check ("11.1 Solution length is 2", Sol'Length = 2);
@@ -143,7 +143,7 @@ begin
       Check ("12.3 Sampled secret bit 2 is 0", S_Sampled(2) = 0);
    end;
 
-   -- TEST 13 — Exception Handling
+   -- TEST 13 — Table Range Error Check
    Put_Line ("TEST 13 — Exception Handling");
    declare
       Invalid_Table : constant Function_Table := [ [0, 0], [0, 1], [1, 0] ];
@@ -155,7 +155,7 @@ begin
          end if;
       exception
          when Invalid_Function_Error =>
-             Ex_Raised := True;
+            Ex_Raised := True;
       end;
       Check ("13.1 Invalid function table raises exception", Ex_Raised);
       Check ("13.2 Invalid dimension handling verified", True);
